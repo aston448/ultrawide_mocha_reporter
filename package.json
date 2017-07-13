@@ -1,0 +1,22 @@
+{
+  "name": "ultrawide-mocha-reporter",
+  "version": "1.0.0",
+  "description": "Mocha JSON Reporter for Ultrawide",
+  "main": "lib/ultrawide_mocha_reporter.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aston448/ultrawide_mocha_reporter.git"
+  },
+  "author": "Night City",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aston448/ultrawide_mocha_reporter/issues"
+  },
+  "homepage": "https://github.com/aston448/ultrawide_mocha_reporter#readme",
+  "dependencies": {
+    "mocha": "^3.4.2"
+  }
+}
