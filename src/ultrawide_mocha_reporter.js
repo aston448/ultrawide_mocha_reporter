@@ -14,7 +14,8 @@ function setDefaultOrSpecifiedOptions(options) {
     return options;
 }
 
-function UltrawideMochaReporter(runner, userOptions) {
+
+function UltrawideMochaReporter(runner, userOptions){
 
     mocha.reporters.Base.call(this, runner);
 
@@ -29,25 +30,26 @@ function UltrawideMochaReporter(runner, userOptions) {
     const options = setDefaultOrSpecifiedOptions(userOptions);
 
     runner.on('suite', function (suite) {
-        if (options.consoleOutput === 'ON' && suite.title !== '') {
+        if(options.consoleOutput === 'ON' && suite.title !== '') {
             console.log('\nTEST SUITE: %s\n---------------------------------------------------------------------------------', suite.title);
         }
     });
 
-    runner.on('pass', function (test) {
+    runner.on('pass', function(test){
         passes.push(test);
         totalPasses++;
 
-        if (options.consoleOutput === 'ON') {
+        if(options.consoleOutput === 'ON') {
             console.log("\x1b[32m  PASS: %s\x1b[0m", test.title);
         }
+
     });
 
-    runner.on('fail', function (test, err) {
+    runner.on('fail', function(test, err){
         failures.push(test);
         totalFailures++;
 
-        if (options.consoleOutput === 'ON') {
+        if(options.consoleOutput === 'ON') {
             console.log("\x1b[31m  FAIL: %s\x1b[0m -- error: %s", test.title, err.message);
         }
     });
@@ -55,16 +57,16 @@ function UltrawideMochaReporter(runner, userOptions) {
     runner.on('pending', function (test) {
         pending.push(test);
 
-        if (options.consoleOutput === 'ON') {
+        if(options.consoleOutput === 'ON') {
             console.log("\x1b[34m  PENDING: %s\x1b[0m", test.title);
         }
     });
 
-    runner.on('test end', test => {
+    runner.on('test end', (test) => {
         tests.push(test);
     });
 
-    runner.on('end', function () {
+    runner.on('end', function(){
 
         let obj = {
             stats: self.stats,
@@ -80,7 +82,7 @@ function UltrawideMochaReporter(runner, userOptions) {
 
         try {
             jsonData = JSON.stringify(obj, null, 2);
-        } catch (e) {
+        } catch(e){
             console.log('\x1b[31mFailed to parse tests into JSON.\x1b[0m  Error: %s', e.message);
             process.exit(1);
         }
@@ -89,12 +91,12 @@ function UltrawideMochaReporter(runner, userOptions) {
         try {
             fs.writeFileSync(options.resultsFile, jsonData);
             console.log('\nResults written to %s', options.resultsFile);
-        } catch (e) {
+        } catch(e){
             console.log('\n\x1b[31mFailed to write test output to %s.\x1b[0m  \nError: %s', options.resultsFile, e.message);
         }
 
         // Log the output file and final results unless absolutely no logging
-        if (options.consoleOutput !== 'OFF') {
+        if(options.consoleOutput !== 'OFF') {
             console.log('\nTest run complete.');
 
             console.log('\n\x1b[34mFINAL SCORE: Passing: %d    Failing: %d\x1b[0m', totalPasses, totalFailures);
@@ -102,9 +104,11 @@ function UltrawideMochaReporter(runner, userOptions) {
 
         process.exit(0);
     });
+
 }
 
-function createTestObject(test) {
+
+function createTestObject (test) {
     return {
         title: test.title,
         fullTitle: test.fullTitle(),
@@ -114,7 +118,8 @@ function createTestObject(test) {
     };
 }
 
-function errorJSON(err) {
+
+function errorJSON (err) {
     let res = {};
 
     Object.getOwnPropertyNames(err).forEach(function (key) {
