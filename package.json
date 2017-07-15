@@ -4,6 +4,8 @@
   "description": "Mocha JSON Reporter for Ultrawide",
   "main": "lib/ultrawide_mocha_reporter.js",
   "scripts": {
+    "compile": "babel src -d lib",
+    "prepublish": "npm run compile",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,7 +18,14 @@
     "url": "https://github.com/aston448/ultrawide_mocha_reporter/issues"
   },
   "homepage": "https://github.com/aston448/ultrawide_mocha_reporter#readme",
+  "babel": {
+    "presets": ["env"]
+  },
   "dependencies": {
     "mocha": "^3.4.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-env": "^1.6.0"
   }
 }

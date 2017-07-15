@@ -2,7 +2,7 @@
 import mocha from 'mocha';
 import fs from 'fs';
 
-exports = module.exports = UltrawideMochaReporter;
+module.exports = UltrawideMochaReporter;
 
 function setDefaultOrSpecifiedOptions(options) {
 
