@@ -6,16 +6,56 @@ module.exports = UltrawideMochaReporter;
 
 function setDefaultOrSpecifiedOptions(options) {
 
-    options = options || {};
-    options = options.reporterOptions || {};
-    options.resultsFile = options.resultsFile || 'test-results.json';
-    options.consoleOutput = options.consoleOutput || 'RESULT';
+    // Options can be entered as env vars if not possible to supply as an options object
 
-    return options;
+    //console.log("Options %o", options);
+
+    if(options && options.reporterOptions && options.reporterOptions.resultsFile){
+
+
+        let reporterOptions = options.reporterOptions;
+        reporterOptions.resultsFile = reporterOptions.resultsFile || 'test-results.json';
+        reporterOptions.consoleOutput = reporterOptions.consoleOutput || 'RESULT';
+
+        return reporterOptions;
+
+    } else {
+
+        const userOutputFile = process.env.OUTPUT_FILE;
+        const userConsoleOption = process.env.CONSOLE;
+
+        // Default values
+        let outputFile = '.test_results/test_results.json';
+        let consoleOption = 'RESULT';
+
+        if (typeof(userOutputFile) !== 'undefined') {
+            outputFile = userOutputFile;
+        }
+
+        if (typeof(userConsoleOption) !== 'undefined') {
+            consoleOption = userConsoleOption.toUpperCase();
+        }
+
+        let reporterOptions = {};
+        reporterOptions.resultsFile = process.env.PWD + '/' + outputFile;
+        reporterOptions.consoleOutput = consoleOption;
+
+        return reporterOptions;
+    }
+
 }
 
 
 function UltrawideMochaReporter(runner, userOptions){
+
+    //console.log('Runner %o ', runner.suite.suites[0]);
+
+    //runner.suite.bail(false);
+
+    // Make sure that no suites bail out on errors
+    runner.suite.suites.forEach((suite) => {
+        suite.bail(false);
+    });
 
     mocha.reporters.Base.call(this, runner);
 
@@ -27,10 +67,14 @@ function UltrawideMochaReporter(runner, userOptions){
     let totalPasses = 0;
     let totalFailures = 0;
 
-    const options = setDefaultOrSpecifiedOptions(userOptions);
+    const reporterOptions = setDefaultOrSpecifiedOptions(userOptions);
 
     runner.on('suite', function (suite) {
-        if(options.consoleOutput === 'ON' && suite.title !== '') {
+        //suite.bail(false);
+
+        //console.log('Suite bail: ' + suite._bail);
+
+        if(reporterOptions.consoleOutput === 'ON' && suite.title !== '') {
             console.log('\nTEST SUITE: %s\n---------------------------------------------------------------------------------', suite.title);
         }
     });
@@ -39,7 +83,7 @@ function UltrawideMochaReporter(runner, userOptions){
         passes.push(test);
         totalPasses++;
 
-        if(options.consoleOutput === 'ON') {
+        if(reporterOptions.consoleOutput === 'ON') {
             console.log("\x1b[32m  PASS: %s\x1b[0m", test.title);
         }
 
@@ -49,7 +93,7 @@ function UltrawideMochaReporter(runner, userOptions){
         failures.push(test);
         totalFailures++;
 
-        if(options.consoleOutput === 'ON') {
+        if(reporterOptions.consoleOutput === 'ON') {
             console.log("\x1b[31m  FAIL: %s\x1b[0m -- error: %s", test.title, err.message);
         }
     });
@@ -57,7 +101,7 @@ function UltrawideMochaReporter(runner, userOptions){
     runner.on('pending', function (test) {
         pending.push(test);
 
-        if(options.consoleOutput === 'ON') {
+        if(reporterOptions.consoleOutput === 'ON') {
             console.log("\x1b[34m  PENDING: %s\x1b[0m", test.title);
         }
     });
@@ -89,14 +133,14 @@ function UltrawideMochaReporter(runner, userOptions){
 
         // Write to default or specified file
         try {
-            fs.writeFileSync(options.resultsFile, jsonData);
-            console.log('\nResults written to %s', options.resultsFile);
+            fs.writeFileSync(reporterOptions.resultsFile, jsonData);
+            console.log('\nResults written to %s', reporterOptions.resultsFile);
         } catch(e){
-            console.log('\n\x1b[31mFailed to write test output to %s.\x1b[0m  \nError: %s', options.resultsFile, e.message);
+            console.log('\n\x1b[31mFailed to write test output to %s.\x1b[0m  \nError: %s', reporterOptions.resultsFile, e.message);
         }
 
         // Log the output file and final results unless absolutely no logging
-        if(options.consoleOutput !== 'OFF') {
+        if(reporterOptions.consoleOutput !== 'OFF') {
             console.log('\nTest run complete.');
 
             console.log('\n\x1b[34mFINAL SCORE: Passing: %d    Failing: %d\x1b[0m', totalPasses, totalFailures);

@@ -5,4 +5,7 @@
 # IntelliJ project files
 .idea
 *.iml
-src/
+
+# Raw code
+/src/
+
