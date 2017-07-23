@@ -6,31 +6,24 @@ module.exports = UltrawideMochaReporter;
 
 function setDefaultOrSpecifiedOptions(options) {
 
-    // Options can be entered as env vars if not possible to supply as an options object
+    // Options can be entered as env vars or an options object depending on how the tests are run
 
-    //console.log("Options %o", options);
+    // See if env vars are being used
+    const userOutputFile = process.env.OUTPUT_FILE;
 
-    if(options && options.reporterOptions && options.reporterOptions.resultsFile){
+    if (typeof(userOutputFile) !== 'undefined') {
 
-
-        let reporterOptions = options.reporterOptions;
-        reporterOptions.resultsFile = reporterOptions.resultsFile || 'test-results.json';
-        reporterOptions.consoleOutput = reporterOptions.consoleOutput || 'RESULT';
-
-        return reporterOptions;
-
-    } else {
-
-        const userOutputFile = process.env.OUTPUT_FILE;
-        const userConsoleOption = process.env.CONSOLE;
+        // Assume env var usage
 
         // Default values
-        let outputFile = '.test_results/test_results.json';
+        let outputFile = 'test_results.json';
         let consoleOption = 'RESULT';
 
-        if (typeof(userOutputFile) !== 'undefined') {
+        if(userOutputFile.length > 0) {
             outputFile = userOutputFile;
         }
+
+        const userConsoleOption = process.env.CONSOLE;
 
         if (typeof(userConsoleOption) !== 'undefined') {
             consoleOption = userConsoleOption.toUpperCase();
@@ -41,6 +34,19 @@ function setDefaultOrSpecifiedOptions(options) {
         reporterOptions.consoleOutput = consoleOption;
 
         return reporterOptions;
+
+    } else {
+
+        // Assume options object.  If that is null, create defaults.
+
+        options = options || {};
+        let reporterOptions = options.reporterOptions || {};
+        reporterOptions.resultsFile = reporterOptions.resultsFile || 'test-results.json';
+        reporterOptions.resultsFile = process.env.PWD + '/' + reporterOptions.resultsFile;
+        reporterOptions.consoleOutput = reporterOptions.consoleOutput || 'RESULT';
+
+        return reporterOptions;
+
     }
 
 }
@@ -48,11 +54,10 @@ function setDefaultOrSpecifiedOptions(options) {
 
 function UltrawideMochaReporter(runner, userOptions){
 
-    //console.log('Runner %o ', runner.suite.suites[0]);
 
-    //runner.suite.bail(false);
+    // Make sure that no suites bail out on errors.
+    // Ultrawide always wants to know about all test results
 
-    // Make sure that no suites bail out on errors
     runner.suite.suites.forEach((suite) => {
         suite.bail(false);
     });
@@ -70,12 +75,15 @@ function UltrawideMochaReporter(runner, userOptions){
     const reporterOptions = setDefaultOrSpecifiedOptions(userOptions);
 
     runner.on('suite', function (suite) {
-        //suite.bail(false);
 
-        //console.log('Suite bail: ' + suite._bail);
+        //console.log("Suites: %d", suite.suites.length);
 
         if(reporterOptions.consoleOutput === 'ON' && suite.title !== '') {
-            console.log('\nTEST SUITE: %s\n---------------------------------------------------------------------------------', suite.title);
+            if(suite.suites.length > 0){
+                console.log('\n\x1b[34mSUITE : %s\x1b[0m\n\x1b[34m---------------------------------------------------------------------------------\x1b[0m', suite.title);
+            } else {
+                console.log('\nTEST : %s', suite.title);
+            }
         }
     });
 

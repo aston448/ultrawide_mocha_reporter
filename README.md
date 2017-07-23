@@ -1,12 +1,12 @@
 # Ultrawide Mocha Reporter #
 
-A custom reporter for Ultrawide.  Outputs mocha test results as an Ultrawide compatible JSON file and optionally also to the console.
+A custom reporter for Ultrawide.  Outputs mocha test results as an Ultrawide compatible JSON file and, optionally, also to the console.
 
-## Use ##
+## Use Case ##
 
-You are developing an application and mocha for testing and Ultrawide for your development control.
+You are developing an application using Mocha for testing and Ultrawide for your development control.
 
-This reporter will output your test results in a JSON format that Ultrawide can read to a file that you can specify.
+This reporter will output your mocha test results in a JSON format that Ultrawide can read to a file that you can specify.
 
 ## Install ##
 
@@ -14,52 +14,31 @@ This reporter will output your test results in a JSON format that Ultrawide can 
 
 ## Set Up ##
 
-Set up depends on the context in which you are running mocha.
+Set up depends on the context in which you are running mocha.  You can either specify mocha configuration or, if this is not possible, use envireonment variables
 
-### Config file ###
-If you can supply a reporter and reporter options, e.g. in a Chimp config file then setup could be something like this:
-
-Chimp config file:
+### Configuration Options ###
+If you can supply config options to your mocha tests then the following should be specified:
 
 ```
-File: chimp.js
-
-module.exports = {
-    mocha: true,
-    mochaConfig:
+mochaConfig:
+{
+    reporter: 'ultrawide-mocha-reporter',
+    reporterOptions:
     {
-        reporter: 'ultrawide-mocha-reporter',
-        reporterOptions:
-        {
-            resultsFile: '<path/to/output_file>',
-            consoleOutput: 'ON'
-        }
+        resultsFile: '<path/to/output_file>',
+        consoleOutput: 'ON'
     }
 }
-```
-The JSON output file will appear under the directory in which you are running the test instance of your application.
-The directory must exist before running the tests.
-
-The consoleOutput options are:
-
- * ON - test results also appear on the console where you run the test command
- * RESULT - only the number of passes and fails is reported at the end of the run
- * OFF - no console output except errors
-
-In your package.json file (or wherever you run chimp from) you would have something like this:
 
 ```
-"scripts": {
-    "chimp:acceptance": "chimp .config/chimp.js --ddp=http://localhost:3030 --path=tests/integration",
-}
-```
-The above is for a meteor application where the config file is in a directory called .config.  See Chimp documentation for further details on using a config file
 
-If you want to run different tests with different output files you would need to create more then one config file, e.g. chimp_1.js, chimp_2.js
+
 
 ### Environment Vars in command line ###
 
-This is an example for Meteor testing.  But it should work wherever you can specify a mocha reporter.
+If you cannot reference mocha reporter options you can make this reporter work with environment variables in the command line provided that your method of working allows you to specify a custom reporter.
+
+The following is an example for Meteor testing.  But it should work wherever you can specify a mocha reporter.
 
 In your package.json scripts, modify the script that runs your mocha tests to include the following environment variables (without the line breaks):
 
@@ -68,8 +47,13 @@ In your package.json scripts, modify the script that runs your mocha tests to in
      OUTPUT_FILE=.test_results/unit_results.json CONSOLE=ON
      meteor test --once  --driver-package dispatch:mocha",
 ```
-The JSON output file will appear under the directory in which you are running the test instance of your application.
-Any directory specified (e.g. ```.test_results/``` here) must exist before running the tests.
+
+### Results File ###
+
+The JSON output file will appear in your specified file under the directory in which you are running the test instance of your application.
+Any sub-directory you specify must exist before running the tests.  Don't use a leading /.
+
+### Console Output ###
 
 The CONSOLE options are:
 
@@ -77,8 +61,6 @@ The CONSOLE options are:
  * RESULT - only the number of passes and fails is reported at the end of the run
  * OFF - no console output except errors
 
-
-If you want to run different tests with different output files you would need to create more than one script.
 
 
 ## Licence ##
