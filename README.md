@@ -12,6 +12,12 @@ This reporter will output your mocha test results in a JSON format that Ultrawid
 
 ```npm install ultrawide-mocha-reporter --save-dev```
 
+If your test runner is not able to 'require' this reporter from your local node_modules try:
+
+```npm install -g ultrawide-mocha-reporter```
+
+and add the global path when specifying the reporter (e.g. ```/usr/local/lib/node_modules/ultrawide-mocha-reporter```)
+
 ## Set Up ##
 
 Set up depends on the context in which you are running mocha.  You can either specify mocha configuration or, if this is not possible, use environment variables
