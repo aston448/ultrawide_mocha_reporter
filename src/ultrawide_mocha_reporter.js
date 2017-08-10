@@ -30,8 +30,16 @@ function setDefaultOrSpecifiedOptions(options) {
         }
 
         let reporterOptions = {};
-        reporterOptions.resultsFile = process.env.PWD + '/' + outputFile;
+
+        if(outputFile.startsWith('/')){
+            reporterOptions.resultsFile = process.env.PWD + outputFile;
+        } else {
+            reporterOptions.resultsFile = process.env.PWD + '/' + outputFile;
+        }
+
         reporterOptions.consoleOutput = consoleOption;
+
+        checkResultsDir(reporterOptions.resultsFile);
 
         return reporterOptions;
 
@@ -40,10 +48,19 @@ function setDefaultOrSpecifiedOptions(options) {
         // Assume options object.  If that is null, create defaults.
 
         options = options || {};
+
         let reporterOptions = options.reporterOptions || {};
         reporterOptions.resultsFile = reporterOptions.resultsFile || 'test-results.json';
-        reporterOptions.resultsFile = process.env.PWD + '/' + reporterOptions.resultsFile;
+
+        if(reporterOptions.resultsFile.startsWith('/')){
+            reporterOptions.resultsFile = process.env.PWD + reporterOptions.resultsFile;
+        } else {
+            reporterOptions.resultsFile = process.env.PWD + '/' + reporterOptions.resultsFile;
+        }
+
         reporterOptions.consoleOutput = reporterOptions.consoleOutput || 'RESULT';
+
+        checkResultsDir(reporterOptions.resultsFile);
 
         return reporterOptions;
 
@@ -143,9 +160,10 @@ function UltrawideMochaReporter(runner, userOptions){
         try {
             fs.writeFileSync(reporterOptions.resultsFile, jsonData);
             console.log('\nResults written to %s', reporterOptions.resultsFile);
-        } catch(e){
+        } catch (e) {
             console.log('\n\x1b[31mFailed to write test output to %s.\x1b[0m  \nError: %s', reporterOptions.resultsFile, e.message);
         }
+
 
         // Log the output file and final results unless absolutely no logging
         if(reporterOptions.consoleOutput !== 'OFF') {
@@ -179,4 +197,45 @@ function errorJSON (err) {
     }, err);
 
     return res;
+}
+
+function checkResultsDir (outputFile) {
+
+    let pathArray = outputFile.split("/");
+
+    let elements = pathArray.length;
+
+    if (elements > 1){
+
+        let dir = '/';
+        let index = 0;
+
+        // Get the DIR part of the path
+        while(index < elements-1){
+
+            if(pathArray[index].trim() !== '') {
+                dir = dir + pathArray[index] + '/';
+            }
+
+            index++;
+        }
+
+        if (!fs.existsSync(dir)){
+
+            try {
+                fs.mkdirSync(dir);
+                console.log("Created directory for test files: %s", dir);
+                return true
+            } catch(e){
+                console.log("Unable to create directory: %s. ERROR: %s", dir, e);
+                return false
+            }
+
+        } else {
+            return false
+        }
+
+    } else {
+        return true
+    }
 }

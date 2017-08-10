@@ -12,15 +12,15 @@ This reporter will output your mocha test results in a JSON format that Ultrawid
 
 ```npm install ultrawide-mocha-reporter --save-dev```
 
-If your test runner is not able to 'require' this reporter from your local node_modules try:
-
-```npm install -g ultrawide-mocha-reporter```
-
-and add the global path when specifying the reporter (e.g. ```/usr/local/lib/node_modules/ultrawide-mocha-reporter```)
 
 ## Set Up ##
 
 Set up depends on the context in which you are running mocha.  You can either specify mocha configuration or, if this is not possible, use environment variables
+
+If your test runner mocha is not able to 'require' this reporter from your application local node_modules try using:
+
+```$PWD/node_modules/ultrawide-mocha-reporter``` when specifying the reporter name.
+
 
 ### Configuration Options ###
 If you can supply config options to your mocha tests then the following should be specified:
@@ -54,14 +54,15 @@ In your package.json scripts, modify the script that runs your mocha tests to in
      meteor test --once  --driver-package dispatch:mocha",
 ```
 
+
 ## Reporter Options ##
 
-### Results File ###
+### OUTPUT_FILE ###
 
 The JSON output file will appear in your specified file under the directory in which you are running the test instance of your application.
-Any sub-directory you specify must exist before running the tests.  Don't use a leading /.
+Any sub-directory you specify will be created if there is permission to do so.
 
-### Console Output ###
+### CONSOLE ###
 
 The CONSOLE options are:
 
