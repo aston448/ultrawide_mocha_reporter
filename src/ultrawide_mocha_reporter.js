@@ -93,13 +93,19 @@ function UltrawideMochaReporter(runner, userOptions){
 
     runner.on('suite', function (suite) {
 
-        //console.log("Suites: %d", suite.suites.length);
-
+        // Categorise the putput depending on the hierarchical level in the test file
         if(reporterOptions.consoleOutput === 'ON' && suite.title !== '') {
-            if(suite.suites.length > 0){
+            if(suite.parent.root){
+                // Level 1
                 console.log('\n\x1b[34mSUITE : %s\x1b[0m\n\x1b[34m---------------------------------------------------------------------------------\x1b[0m', suite.title);
             } else {
-                console.log('\nTEST : %s', suite.title);
+                if(suite.parent.parent.root){
+                    // Level 2
+                    console.log('\n\x1b[34m  %s\x1b[0m', suite.title);
+                } else {
+                    // Level n
+                    console.log('\n    %s', suite.title);
+                }
             }
         }
     });
@@ -109,7 +115,7 @@ function UltrawideMochaReporter(runner, userOptions){
         totalPasses++;
 
         if(reporterOptions.consoleOutput === 'ON') {
-            console.log("\x1b[32m  PASS: %s\x1b[0m", test.title);
+            console.log("\x1b[32m    PASS: %s\x1b[0m", test.title);
         }
 
     });
@@ -119,7 +125,7 @@ function UltrawideMochaReporter(runner, userOptions){
         totalFailures++;
 
         if(reporterOptions.consoleOutput === 'ON') {
-            console.log("\x1b[31m  FAIL: %s\x1b[0m -- error: %s", test.title, err.message);
+            console.log("\x1b[31m    FAIL: %s\x1b[0m -- error: %s", test.title, err.message);
         }
     });
 
@@ -127,7 +133,7 @@ function UltrawideMochaReporter(runner, userOptions){
         pending.push(test);
 
         if(reporterOptions.consoleOutput === 'ON') {
-            console.log("\x1b[34m  PENDING: %s\x1b[0m", test.title);
+            console.log("\x1b[34m    PENDING: %s\x1b[0m", test.title);
         }
     });
 
