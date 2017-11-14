@@ -70,7 +70,12 @@ The CONSOLE options are:
  * RESULT - only the number of passes and fails is reported at the end of the run
  * OFF - no console output except errors
 
+## Console Output ##
 
+The console output is formatted hierarchically to match the hierarchy in a mocha test file.  The top level describe() will appear as a suite.  It is designed to map to an Ultrawide Feature or the module in a unit test.
+A second level describe() will be displayed as a heading.  For integration tests it can correspond to an Ultrawide Feature Aspect.  For unit tests to an Ultrawide Scenario
+A third level describe can be used if, for an integration test, a Scenario has more than one test.
+The it()s will always look like tests.
 
 ## Licence ##
 MIT
