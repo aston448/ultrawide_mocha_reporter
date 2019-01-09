@@ -75,8 +75,18 @@ function UltrawideMochaReporter(runner, userOptions){
     // Make sure that no suites bail out on errors.
     // Ultrawide always wants to know about all test results
 
+    // Goes down 3 levels of suites - all must be set or tests at that level don't run after a failure
     runner.suite.suites.forEach((suite) => {
+        //console.log('\nSetting %s to bail false', suite.title);
         suite.bail(false);
+        suite.suites.forEach((suite) => {
+            //console.log('\nSetting %s to bail false', suite.title);
+            suite.bail(false);
+            suite.suites.forEach((suite) => {
+                //console.log('\nSetting %s to bail false', suite.title);
+                suite.bail(false);
+            });
+        });
     });
 
     mocha.reporters.Base.call(this, runner);
@@ -93,7 +103,7 @@ function UltrawideMochaReporter(runner, userOptions){
 
     runner.on('suite', function (suite) {
 
-        // Categorise the putput depending on the hierarchical level in the test file
+        // Categorise the output depending on the hierarchical level in the test file
         if(reporterOptions.consoleOutput === 'ON' && suite.title !== '') {
             if(suite.parent.root){
                 // Level 1
