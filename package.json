@@ -1,6 +1,6 @@
 {
   "name": "ultrawide-mocha-reporter",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Mocha JSON Reporter for Ultrawide",
   "main": "lib/ultrawide_mocha_reporter.js",
   "scripts": {
